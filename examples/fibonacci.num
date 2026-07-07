@@ -1,0 +1,16 @@
+the first fifteen fibonacci numbers
+
+slots one and two hold the pair and slot three counts
+none of them hold their own value for long
+
+1 <<
+11 = @0
+12 = @1
+13 = @0
+!! (13 < @(1)) {
+    11 >>           print number
+    14 = 11 + 12      get next number
+    11 = 12          pass number over
+    12 = 14          pass new number
+    13 = 13 + @1     increment counter
+}

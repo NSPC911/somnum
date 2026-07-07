@@ -1,0 +1,16 @@
+a sparse set of numbers built with assignment and innocence
+presence means a slot was ever assigned absence means it stayed innocent
+there are no arrays so the set lives directly on the number line
+
+@(900 + 3) = @1
+@(900 + 7) = @1
+@(900 + 12) = @1
+@(900 + 19) = @1
+
+~@(900 + 7) >>      # prints 0 because seven was inserted
+~@(900 + 8) >>      # prints 1 because eight was never inserted
+
+forgetting a slot removes it from the set
+
+@(900 + 7) ~
+~@(900 + 7) >>      # prints 1 now that seven has been forgotten

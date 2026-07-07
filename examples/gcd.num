@@ -1,0 +1,13 @@
+greatest common divisor of two numbers read from stdin
+solved entirely by recursion using the euclidean algorithm
+
+710 = & (0, 1) => (2) {
+    ? (1 == @0) {
+        2 = 0                  the second number is zero so the first is the answer
+    } ??? {
+        2 = $710 (1, 0 % 1)    otherwise recurse with the second number and the remainder
+    }
+}
+
+700 <<
+$710 (700, 701) >>

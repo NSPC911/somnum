@@ -1,0 +1,41 @@
+fizzbuzz in somnum
+
+there are no strings so the words live on the tape as character codes
+
+# Fizz is F i z z
+800 = @70
+801 = @105
+802 = @122
+803 = @122
+
+# Buzz is B u z z
+810 = @66
+811 = @117
+812 = @122
+813 = @122
+
+# FizzBuzz is both words glued together
+820 = @70
+821 = @105
+822 = @122
+823 = @122
+824 = @66
+825 = @117
+826 = @122
+827 = @122
+
+count from one to one hundred in slot nine hundred
+
+900 = @1
+!! (900 < @101) {
+    ? (900 % @15 == @0) {
+        820 >->
+    } ?? (900 % @3 == @0) {
+        800 >->
+    } ?? (900 % @5 == @0) {
+        810 >->
+    } ??? {
+        900 >>
+    }
+    900 = 900 + @1
+}

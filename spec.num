@@ -1,0 +1,233 @@
+#################################################################
+#      SOMNUM: Numbers are first class citizens                 #
+#                                                               #
+#  this file is the whole spec and it is also a program         #
+#  because prose is made of letters and letters are comments    #
+#                                                               #
+#     cat spec.stdin | uv run somnum spec.num                   #
+#################################################################
+
+
+# 1. comments
+
+every letter is deleted before parsing so prose is free
+# a line with digits or punctuation is forced into a comment with a pound sign
+
+
+# 2. numbers are variables
+
+every number is a variable and its initial value is itself
+assignment stores the value of the right side
+
+10 = 5
+5 + 10 >>           # prints 10
+5 * 10 >>           # prints 25
+5 / 10 >>           # prints 1     no decimals and rounding is toward zero
+5 ^ 10 >>           # prints 3125  five to the fifth because slot 10 holds 5
+
+a minus glued to a digit is a sign and a spaced minus subtracts
+there is no lone unary minus and assigning to a negative slot is an error
+so a negative number is forever its own value
+
+-3 >>               # prints -3
+0 - 8 >>            # prints -8
+
+1 = 2 + 1           # slot 1 becomes 3
+4 + 1 >>            # prints 7
+100 = (10 + 5) * 11
+100 >>              # prints 110
+
+
+# 3. the literal operator
+
+# @ gives the plain number and skips the lookup
+
+5 = @10
+5 + 10 >>           # prints 15
+@(@(@(2 + 3))) >>   # prints 5 because stacking @ does nothing
+
+# on the left side of = it turns a computed value into an address
+
+@(2 + 3) = 44       # writes slot 5
+5 >>                # prints 44
+
+# numbers inside the parentheses are looked up as usual
+# so write @(@200 + 3) when you mean the plain address 203
+
+1 ~
+10 ~
+100 ~
+
+
+# 4. forgetting
+
+assignment can never restore a slot to innocence
+the tilde makes a slot forget it was ever assigned
+
+5 ~
+5 >>                # prints 5 because slot five is itself again
+
+forgetting a slot that was never set is allowed and does nothing
+
+in an expression the tilde asks instead of forgets
+a slot that holds its own value and an innocent slot look identical
+so equality can never answer whether a slot was ever assigned
+
+~9 >>               # prints 1 because slot nine is innocent
+9 = @9
+~9 >>               # prints 0 because setting a slot to itself still sets it
+9 ~
+~9 >>               # prints 1 again
+
+# it takes an address like $ does so ~@(8 + 1) also asks about slot 9
+# a negative slot can never be assigned so its innocence is always 1
+
+
+# 5. Output
+
+# each operator prints one line
+#   >>   the value as a number         ->   the value as one character
+#   >>>  walk the tape from an address printing numbers with spaces
+#   >->  walk the tape from an address printing characters
+
+87 ->               # prints W
+
+
+# 6. Conditionals
+
+# ? is if and ?? is else if and ??? is else
+# zero is the only false value
+# the comparisons are  ==  !=  <  >  <=  >=  and each gives 1 or 0
+# <> gives 1 when both sides have the same type
+
+30 = 2
+? (30 == @1) {
+    61 >>
+} ?? (30 >= @2) {
+    62 >>           # prints 62
+} ??? {
+    63 >>
+}
+? (30 <= @2) {
+    71 >>           # prints 71
+}
+
+
+# 7. Tapes and loops
+
+there are no arrays and no strings
+a string is a run of consecutive slots holding character codes
+and a walk stops at the first slot that was never assigned
+
+200 = 99
+201 = 97
+202 = 98
+200 >->             # prints cab
+200 >>>             # prints 99 97 98
+
+# the ! loop runs a fixed number of times counting the var from zero
+8 = @0
+! (5) (7) {
+    8 = 8 + 7       # 0 + 1 + 2 + 3 + 4
+}
+8 >>                # prints 10
+7 ~
+8 ~
+
+@(@200 + 50) = 33   # a computed address is a pointer
+250 >>              # prints 33
+
+# the !! loop repeats while its condition is nonzero
+260 = @1
+!! (260 <= @16) {
+    260 = 260 * @2
+}
+260 >>              # prints 32
+
+there is no break statement
+a condition reads slots so breaking is falsifying a slot it watches
+
+270 = @1
+271 = @0
+!! (270) {
+    271 = 271 + @10
+    ? (271 > @25) {
+        270 = @0    # this is break
+    }
+}
+271 >>              # prints 30
+
+forgetting a slot punches a hole that stops every walk
+
+201 ~
+200 >>>             # prints 99
+
+
+# 8. functions
+
+# a function is a value that lives in a slot like anything else
+#     & (parameter slots) => (return slot) ~ (scratch slots) { body }
+# declared slots are local to each call and restored afterwards
+# the return slot and scratch slots start at their own defaults
+# anything undeclared that the body touches is a global side effect
+
+300 = & (0, 1) => (2) ~ (3) {
+    3 = 0 * 0
+    2 = 3 + 1 * 1
+}
+$300 (3, 4) >>      # prints 25
+
+# a slot may be both parameter and return which gives in place transforms
+310 = & (0) => (0) { 0 = 0 * 0 * 0 }
+$310 (2) >>         # prints 8
+
+# recursion works because every call saves and restores its declared slots
+320 = & (0) => (1) {
+    ? (0 == @0) {
+        1 = @1
+    } ??? {
+        1 = 0 * $320 (0 - @1)
+    }
+}
+$320 (5) >>         # prints 120
+
+321 = 320           # assignment copies functions like any value
+$321 (4) >>         # prints 24
+
+? (320 <> &) {
+    81 >>           # prints 81 because a bare & names the function type
+}
+
+
+# 9. stdin
+
+# << reads a line of space separated numbers onto the tape
+# <- reads a line of text onto the tape as character codes
+
+400 <<
+400 >>>             # prints 6 7 8
+500 <-
+500 >->             # prints hello world
+
+# beware that a < -3 needs its spaces because <- is an operator
+
+
+# errors
+
+# these halt the program
+#   assigning to or forgetting a negative slot
+#   division or modulo by zero and negative exponents
+#   a statement beginning with a lone minus
+#   a bare expression that is not a call since it would do nothing
+#   => () since a function returns exactly one slot
+#   a repeated slot or a negative slot in a signature
+#   calling a non function or with the wrong number of arguments
+# a scratch slot repeating a parameter or the return slot is ignored
+
+
+######## the end ########
+
+600 = 98
+601 = 121
+602 = 101
+600 >->             # prints bye

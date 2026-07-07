@@ -1,0 +1,74 @@
+[project]
+name = "somnum"
+version = "0.1.0"
+description = "An esolang where numbers are variables"
+readme = "README.md"
+authors = [
+    { name = "NSPC911", email = "87571998+NSPC911@users.noreply.github.com" }
+]
+requires-python = ">=3.14"
+dependencies = ["prompt-toolkit>=3.0"]
+
+[project.scripts]
+somnum = "somnum:main"
+
+[dependency-groups]
+dev = [
+    "pytest",
+    "ruff>=0.15.20",
+    "ty==0.0.49",
+]
+
+[build-system]
+requires = ["uv_build>=0.11.26,<0.12.0"]
+build-backend = "uv_build"
+
+[tool.ruff]
+force-exclude = true
+exclude = []
+
+[tool.ruff.lint]
+select = [
+  "ASYNC220",
+  "ASYNC221",
+  "ASYNC251",
+  "ANN",
+  "COM819",
+  "C400",
+  "DOC",
+  "D404",
+  "E",
+  "F",
+  "I",
+  "N801", "N802", "N805",
+  "PLE1142",
+  "Q",
+  "SIM",
+  "TD",
+  "W",
+]
+ignore = [
+  "ANN002",
+  "ANN003",
+  "ANN401",
+  "E501",
+  "E731",
+  "TD002",
+  "TD003",
+  "W505",
+]
+preview = true
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "auto"
+preview = true
+
+[tool.ty.rules]
+unresolved-reference = "ignore" # handled by ruff
+unresolved-attribute = "ignore"
+no-matching-overload = "ignore" # not that accurate
+# possibly-missing-attribute = "ignore" # no it is not missing
+invalid-assignment = "warn" # probably already but warn for future
+unused-ignore-comment = "ignore"

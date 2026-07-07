@@ -1,0 +1,4 @@
+read one line of text from stdin and say it back
+
+100 <-     take in string from stdin
+100 >->    write string to stdin
