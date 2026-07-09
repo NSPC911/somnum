@@ -51,6 +51,11 @@ so a negative number is forever its own value
 @(2 + 3) = 44       # writes slot 5
 5 >>                # prints 44
 
+# @@ goes one step further: it computes the address the same way @( ) does
+# but then reads whatever is stored there instead of stopping at the address
+
+@@(2 + 3) >>        # prints 44 too because slot 5 (2 + 3) holds 44 from above
+
 # numbers inside the parentheses are looked up as usual
 # so write @(@200 + 3) when you mean the plain address 203
 

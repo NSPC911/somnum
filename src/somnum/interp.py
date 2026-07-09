@@ -224,6 +224,12 @@ class Parser:
             return ("slot", self.next()[1])
         if t == "@":
             self.next()
+            if self.peek() == "@":
+                self.next()
+                self.expect("(")
+                e = self.expr()
+                self.expect(")")
+                return ("deref", e, ln)
             if self.peek() == "INT":
                 return ("num", self.next()[1])
             if self.peek() == "(":
@@ -429,6 +435,12 @@ class Interp:
             return e[1]
         if k == "at":
             return self.eval(e[1])
+        if k == "deref":
+            _, addr, ln = e
+            a = self.eval(addr)
+            if not isinstance(a, int):
+                raise LangError(f"line {ln}: an address must be a number")
+            return self.env.get(a, a)
         if k == "fn":
             return Function(e[1], e[2], e[3], e[4])
         if k == "innocent":

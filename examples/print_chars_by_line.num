@@ -1,0 +1,10 @@
+prints input characters one by one
+
+80 <-                 take in input
+0 = @80               start slot
+!! (1 - ~@(0)) {      while slot contains a set value
+  @@(0) ->            # print out var  (for eg, @(0) would give 81, @@(0) would give value that 81 has)
+  0 = 0 + 1           # go down the tape
+}
+
+# alternatively you can create a version which goes up the tape, why not try to create it yourself!
