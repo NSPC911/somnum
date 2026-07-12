@@ -64,28 +64,29 @@ so a negative number is forever its own value
 100 ~
 
 
-# 4. forgetting
+# 4. unassignment
 
-assignment can never restore a slot to innocence
-the tilde makes a slot forget it was ever assigned
+assignment can never restore a slot to its true unassigned state
+the tilde makes a slot unassign itself
 
 5 ~
 5 >>                # prints 5 because slot five is itself again
 
-forgetting a slot that was never set is allowed and does nothing
+unassigning a slot that was never set is allowed and does nothing
 
-in an expression the tilde asks instead of forgets
-a slot that holds its own value and an innocent slot look identical
-so equality can never answer whether a slot was ever assigned
+in an expression the tilde asks whether the number was set to a
+different value. since a slot that holds its own value and an
+unset slot look identical, equality can never answer whether a
+slot was ever assigned, thats where tilda is necessary
 
-~9 >>               # prints 1 because slot nine is innocent
+~9 >>               # prints 1 because slot nine is unset
 9 = @9
 ~9 >>               # prints 0 because setting a slot to itself still sets it
 9 ~
 ~9 >>               # prints 1 again
 
 # it takes an address like $ does so ~@(8 + 1) also asks about slot 9
-# a negative slot can never be assigned so its innocence is always 1
+# a negative slot can never be assigned so its assignment check is always 1
 
 
 # 5. Output
